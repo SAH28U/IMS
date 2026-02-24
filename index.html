@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VARZM.Inc — Logistics Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="DA.png">
+</head>
+<body>
+
+<!-- ══ AUTH ══════════════════════════════════════ -->
+<div id="authContainer">
+
+    <!-- LOGIN -->
+    <div class="auth-card" id="loginCard">
+        <div class="auth-logo">
+            <img src="DA.png" alt="VARZM.Inc" style="height: 32px; width: auto; vertical-align: middle;">
+            VARZM.Inc
+        </div>
+        <h2>Sign In to Portal</h2>
+
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password"
+                   onkeydown="if(event.key==='Enter') login()">
+        </div>
+
+        <button class="btn btn-primary" onclick="login()" style="margin-top:6px">Sign In</button>
+        <p id="authMessage"></p>
+
+        <hr class="auth-divider">
+        <button class="auth-link" onclick="showCard('registerCard')">Create an account</button>
+        <button class="auth-link" onclick="showCard('forgotCard')">Forgot password?</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-card hidden" id="registerCard">
+        <div class="auth-logo">
+            <img src="DA.png" alt="VARZM.Inc" style="height: 32px; width: auto; vertical-align: middle;">
+            VARZM.Inc
+        </div>
+        <h2>Create Account</h2>
+
+        <div class="form-row" style="flex-direction:column;gap:0">
+            <div class="input-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Doe"></div>
+            <div class="input-group"><label>Email</label><input type="email" id="regEmail" placeholder="john@varzm.com"></div>
+            <div class="input-group"><label>Username</label><input type="text" id="regUsername" placeholder="johndoe"></div>
+            <div class="input-group"><label>Password</label><input type="password" id="regPassword" placeholder="Min. 6 characters"></div>
+            <div class="input-group">
+                <label>Role</label>
+                <select id="regRole">
+                    <option value="Staff">Staff</option>
+                    <option value="Manager">Manager</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="register()" style="margin-top:6px">Create Account</button>
+        <hr class="auth-divider">
+        <button class="auth-link" onclick="showCard('loginCard')">← Back to Sign In</button>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div class="auth-card hidden" id="forgotCard">
+        <div class="auth-logo">
+            <img src="DA.png" alt="VARZM.Inc" style="height: 32px; width: auto; vertical-align: middle;">
+            VARZM.Inc
+        </div>
+        <h2>Reset Password</h2>
+
+        <div class="input-group"><label>Username</label><input type="text" id="forgotUsername" placeholder="Your username"></div>
+        <div class="input-group"><label>New Password</label><input type="password" id="newPassword" placeholder="New password"></div>
+
+        <button class="btn btn-primary" onclick="resetPassword()" style="margin-top:6px">Reset Password</button>
+        <hr class="auth-divider">
+        <button class="auth-link" onclick="showCard('loginCard')">← Back to Sign In</button>
+    </div>
+
+</div>
+
+<!-- ══ PORTAL ══════════════════════════════════════ -->
+<div id="portal" class="hidden">
+
+    <header>
+        <div class="header-brand">
+            <img src="DA.png" alt="VARZM.Inc" style="height: 40px; width: auto; margin-right: 12px;">
+            <h2>VARZM.INC LOGISTICS</h2>
+        </div>
+        <div class="header-right">
+            <span id="userDisplay"></span>
+            <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+        </div>
+    </header>
+
+    <div class="portal-body">
+        <nav class="sidebar">
+            <div class="sidebar-label">Navigation</div>
+            <button class="nav-btn active" id="nav-dashboard" onclick="showSection('dashboard')">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </button>
+            <button class="nav-btn" id="nav-inventory" onclick="showSection('inventory')">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Inventory
+            </button>
+            <button class="nav-btn" id="nav-shipments" onclick="showSection('shipments')">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Shipments
+            </button>
+            <button class="nav-btn" id="nav-clients" onclick="showSection('clients')">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Clients
+            </button>
+        </nav>
+
+        <main class="main-content">
+
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="section active">
+                <div class="section-header">
+                    <div>
+                        <h3>DASHBOARD</h3>
+                        <p>System overview and key metrics</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Inventory</div>
+                        <div class="stat-value" id="totalInventory">0</div>
+                        <div class="stat-icon">📦</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Shipments</div>
+                        <div class="stat-value" id="totalShipments">0</div>
+                        <div class="stat-icon">🚚</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Clients</div>
+                        <div class="stat-value" id="totalClients">0</div>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pending Shipments</div>
+                        <div class="stat-value" id="pendingShipments">0</div>
+                        <div class="stat-icon">⏳</div>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h4>Recent Activity</h4>
+                    </div>
+                    <div id="activityFeed" style="padding:16px 20px;font-size:13px;color:var(--text-muted);font-family:var(--mono)">
+                        No recent activity.
+                    </div>
+                </div>
+            </div>
+
+            <!-- INVENTORY -->
+            <div id="inventory" class="section">
+                <div class="section-header">
+                    <div>
+                        <h3>INVENTORY</h3>
+                        <p>Manage warehouse stock and items</p>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4>Add Inventory Item</h4>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Item Name</label>
+                            <input id="itemName" placeholder="e.g. Steel Pipes">
+                        </div>
+                        <div class="input-group">
+                            <label>Quantity</label>
+                            <input id="itemQty" type="number" placeholder="0" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>Warehouse</label>
+                            <input id="itemWarehouse" placeholder="e.g. WH-01">
+                        </div>
+                        <button class="btn btn-primary" style="width:auto;flex-shrink:0;align-self:flex-end" onclick="addInventory()">Add Item</button>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h4>Inventory List</h4>
+                        <span class="table-count" id="invCount">0 items</span>
+                    </div>
+                    <div id="inventoryTable"></div>
+                </div>
+            </div>
+
+            <!-- SHIPMENTS -->
+            <div id="shipments" class="section">
+                <div class="section-header">
+                    <div>
+                        <h3>SHIPMENTS</h3>
+                        <p>Track and manage shipments</p>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4>New Shipment</h4>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Shipment ID</label>
+                            <input id="shipID" placeholder="e.g. SHP-0042">
+                        </div>
+                        <div class="input-group">
+                            <label>Destination</label>
+                            <input id="shipDestination" placeholder="e.g. Cape Town">
+                        </div>
+                        <div class="input-group">
+                            <label>Status</label>
+                            <select id="shipStatus">
+                                <option>Pending</option>
+                                <option>In Transit</option>
+                                <option>Delivered</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width:auto;flex-shrink:0;align-self:flex-end" onclick="addShipment()">Add Shipment</button>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h4>Shipment Records</h4>
+                        <span class="table-count" id="shipCount">0 shipments</span>
+                    </div>
+                    <div id="shipmentsTable"></div>
+                </div>
+            </div>
+
+            <!-- CLIENTS -->
+            <div id="clients" class="section">
+                <div class="section-header">
+                    <div>
+                        <h3>CLIENTS</h3>
+                        <p>Manage client records</p>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4>Add Client</h4>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Client Name</label>
+                            <input id="clientName" placeholder="e.g. Acme Corp">
+                        </div>
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <input id="clientEmail" placeholder="contact@acme.com" type="email">
+                        </div>
+                        <div class="input-group">
+                            <label>Phone (optional)</label>
+                            <input id="clientPhone" placeholder="+27 __ ___ ____">
+                        </div>
+                        <button class="btn btn-primary" style="width:auto;flex-shrink:0;align-self:flex-end" onclick="addClient()">Add Client</button>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h4>Client Directory</h4>
+                        <span class="table-count" id="clientCount">0 clients</span>
+                    </div>
+                    <div id="clientsTable"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span class="toast-dot"></span><span id="toastMsg"></span></div>
+
+<script src="script.js"></script>
+</body>
+</html>
